@@ -167,3 +167,15 @@ it('Should migrate the database', (done) => {
   p = p.then(() => db.close());
   p.then(done, done);
 });
+
+it('Should allow named parameters with an object for values', (done) => {
+  let p = db.open(':memory:');
+  p = p.then(() => db.exec('CREATE TABLE tbl (col TEXT)'));
+  p = p.then(() => db.run('INSERT INTO tbl(col) VALUES ($col)', { 'col': 'some text' })
+    .then((result) => {
+      console.log('result', result);
+      expect(result.lastID).to.equal(1);
+    }));
+  p = p.then(() => db.close());
+  p.then(done, done);
+});
